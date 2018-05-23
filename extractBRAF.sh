@@ -27,7 +27,7 @@ done
 cd ..
 
 cd normal
-for f in `cat s3_tumor.txt`
+for f in `cat s3_normal.txt`
 do
 	aws s3 cp $f .
 	aws s3 cp $f.bai . 
