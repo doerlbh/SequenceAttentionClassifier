@@ -28,9 +28,8 @@ do
 
 	aws s3 cp $f . 
 	aws s3 cp $f.bai . 
-    samtools view *.bam "chr7:140719327-140924764" | cut -f 10 >> tumor-$f-BRAF.txt
-    rm *.bam
-    rm *.bai
+    samtools view *.bam "chr7:140719327-140924764" | cut -f 10 >> tumor-BRAF.txt
+    rm *.bam*
 done
 cd ..
 
@@ -46,8 +45,7 @@ do
 
 	aws s3 cp $f .
 	aws s3 cp $f.bai . 
-    samtools view *.bam "chr7:140719327-140924764" | cut -f 10 >> normal-$f-BRAF.txt
-    rm *.bam
-    rm *.bai
+    samtools view *.bam "chr7:140719327-140924764" | cut -f 10 >> normal-BRAF.txt
+    rm *.bam*
 done
 cd ..
