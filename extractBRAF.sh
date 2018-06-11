@@ -87,3 +87,33 @@ do
 done
 
 cd ..
+
+
+
+cd data
+
+sed -e 's/N/0, /g' \
+    -e 's/A/1, /g' \
+    -e 's/C/2, /g' \
+    -e 's/T/3, /g' \
+    -e 's/G/4, /g' test-tumor-BRAF.txt > NACTG-test-tumor-BRAF.txt
+
+sed -e 's/N/0, /g' \
+    -e 's/A/1, /g' \
+    -e 's/C/2, /g' \
+    -e 's/T/3, /g' \
+    -e 's/G/4, /g' test-normal-BRAF.txt > NACTG-test-normal-BRAF.txt
+
+sed -e 's/N/0, /g' \
+    -e 's/A/1, /g' \
+    -e 's/C/2, /g' \
+    -e 's/T/3, /g' \
+    -e 's/G/4, /g' train-normal-BRAF.txt > NACTG-train-normal-BRAF.txt
+
+sed -e 's/N/0, /g' \
+    -e 's/A/1, /g' \
+    -e 's/C/2, /g' \
+    -e 's/T/3, /g' \
+    -e 's/G/4, /g' train-tumor-BRAF.txt > NACTG-train-tumor-BRAF.txt
+
+
