@@ -7,7 +7,7 @@ import pandas as pd
 
 # Hyperparameter
 MAX_SEQ_LENGTH = 100
-EMBEDDING_SIZE = 128
+EMBEDDING_SIZE = 10
 HIDDEN_SIZE = 512
 ATTENTION_SIZE = 64
 lr = 1e-3
@@ -44,11 +44,13 @@ for t in np.arange(len(x_test)):
 print(x_train_l.shape)
 print(x_test_l.shape)
 
-x_train = x_train_l[0:100000,:]
-x_test = x_test_l[0:10000,:]
+# x_train = x_train_l[0:100000,:]
+# x_test = x_test_l[0:10000,:]
+x_train = x_train_l
+x_test = x_test_l
 
-y_train = y_train[0:100000,:]
-y_test = y_test[0:10000,:]
+# y_train = y_train[0:100000,:]
+# y_test = y_test[0:10000,:]
 
 # split dataset to test and dev
 x_test, x_dev, y_test, y_dev, dev_size, test_size = \
