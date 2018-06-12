@@ -17,6 +17,8 @@ LAMBDA = 0.0001
 
 MAX_LABEL = 2
 
+vocab_size = 5
+
 epochs = 5
 
 # load data
@@ -42,8 +44,11 @@ for t in np.arange(len(x_test)):
 print(x_train_l.shape)
 print(x_test_l.shape)
 
-x_train = x_train_l
-x_test = x_test_l
+x_train = x_train_l[0:100000,:]
+x_test = x_test_l[0:10000,:]
+
+y_train = y_train[0:100000,:]
+y_test = y_test[0:10000,:]
 
 # split dataset to test and dev
 x_test, x_dev, y_test, y_dev, dev_size, test_size = \
@@ -53,7 +58,7 @@ print("Validation size: ", dev_size)
 graph = tf.Graph()
 with graph.as_default():
 
-    batch_x = tf.placeholder(tf.int32, [None, MAX_DOCUMENT_LENGTH])
+    batch_x = tf.placeholder(tf.int32, [None, MAX_SEQ_LENGTH])
     batch_y = tf.placeholder(tf.float32, [None, MAX_LABEL])
     keep_prob = tf.placeholder(tf.float32)
 
@@ -64,7 +69,7 @@ with graph.as_default():
     # FFN(x) = LN(x + point-wisely NN(x))
     outputs = feedforward(outputs, [HIDDEN_SIZE, EMBEDDING_SIZE])
     print(outputs.shape)
-    outputs = tf.reshape(outputs, [-1, MAX_DOCUMENT_LENGTH * EMBEDDING_SIZE])
+    outputs = tf.reshape(outputs, [-1, MAX_SEQ_LENGTH * EMBEDDING_SIZE])
     logits = tf.layers.dense(outputs, units=MAX_LABEL)
     loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=batch_y))
     optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(loss)
