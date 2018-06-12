@@ -117,3 +117,57 @@ sed -e 's/N/0, /g' \
     -e 's/G/4, /g' train-tumor-BRAF.txt > NACTG-train-tumor-BRAF.txt
 
 
+sed "s/.*/1, &/" test-tumor-BRAF.txt > C-test-tumor-BRAF.txt
+sed "s/.*/1, &/" train-tumor-BRAF.txt > C-train-tumor-BRAF.txt
+sed "s/.*/0, &/" test-normal-BRAF.txt > C-test-normal-BRAF.txt
+sed "s/.*/0, &/" train-normal-BRAF.txt > C-train-normal-BRAF.txt
+
+sed "s/.*/, &/" test-tumor-BRAF.txt > t-test-tumor-BRAF.txt
+sed "s/.*/, &/" train-tumor-BRAF.txt > t-train-tumor-BRAF.txt
+sed "s/.*/, &/" test-normal-BRAF.txt > t-test-normal-BRAF.txt
+sed "s/.*/, &/" train-normal-BRAF.txt > t-train-normal-BRAF.txt
+
+paste ./tumor/tumor-BRAF-loc.txt t-train-tumor-BRAF.txt > u-train-tumor-BRAF.txt
+paste ./tumor/tumor-BRAF-val-loc.txt t-test-tumor-BRAF.txt > u-test-tumor-BRAF.txt
+paste ./normal/normal-BRAF-loc.txt t-train-normal-BRAF.txt > u-train-normal-BRAF.txt
+paste ./normal/normal-BRAF-val-loc.txt t-test-normal-BRAF.txt > u-test-normal-BRAF.txt
+
+sed "s/.*/1, &/" u-test-tumor-BRAF.txt | tr -d " \t"  > C-test-tumor-BRAF.txt
+sed "s/.*/1, &/" u-train-tumor-BRAF.txt | tr -d " \t" > C-train-tumor-BRAF.txt
+sed "s/.*/0, &/" u-test-normal-BRAF.txt | tr -d " \t"  > C-test-normal-BRAF.txt
+sed "s/.*/0, &/" u-train-normal-BRAF.txt | tr -d " \t" > C-train-normal-BRAF.txt
+
+cat C-test-tumor-BRAF.txt C-test-normal-BRAF.txt > ref-test-BRAF.csv
+cat C-train-tumor-BRAF.txt C-train-normal-BRAF.txt > ref-train-BRAF.csv
+
+rm C-*
+rm u-*
+rm t-*
+rm NACTG-*
+
+GENOME_START = 140719327
+GENOME_END = 140924764
+
+mv ref-test-BRAF.csv all-ref-test-BRAF.csv
+mv ref-train-BRAF.csv all-ref-train-BRAF.csv
+
+grep "140719[0-2][0-9][0-9]" all-ref-test-BRAF.csv >> not-ref-test-BRAF.csv
+grep "1407193[0-1][0-9]" all-ref-test-BRAF.csv >> not-ref-test-BRAF.csv
+grep "14071932[0-6]" all-ref-test-BRAF.csv >> not-ref-test-BRAF.csv
+grep "1409247[0-9][0-9]" all-ref-test-BRAF.csv >> not-ref-test-BRAF.csv
+grep "1409246[7-9][0-9]" all-ref-test-BRAF.csv >> not-ref-test-BRAF.csv
+grep "14092466[5-9]" all-ref-test-BRAF.csv >> not-ref-test-BRAF.csv
+
+grep "140719[0-2][0-9][0-9]" all-ref-train-BRAF.csv >> not-ref-train-BRAF.csv
+grep "1407193[0-1][0-9]" all-ref-train-BRAF.csv >> not-ref-train-BRAF.csv
+grep "14071932[0-6]" all-ref-train-BRAF.csv >> not-ref-train-BRAF.csv
+grep "1409247[0-9][0-9]" all-ref-train-BRAF.csv >> not-ref-train-BRAF.csv
+grep "1409246[7-9][0-9]" all-ref-train-BRAF.csv >> not-ref-train-BRAF.csv
+grep "14092466[5-9]" all-ref-train-BRAF.csv >> not-ref-train-BRAF.csv
+
+
+diff -U $(wc -l < all-ref-test-BRAF.csv) all-ref-test-BRAF.csv not-ref-test-BRAF.csv | sed -n 's/^-//p' > ref-test-BRAF.csv
+diff -U $(wc -l < all-ref-train-BRAF.csv) all-ref-train-BRAF.csv not-ref-train-BRAF.csv | sed -n 's/^-//p' > ref-train-BRAF.csv
+
+
+
