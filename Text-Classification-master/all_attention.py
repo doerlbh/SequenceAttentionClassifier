@@ -3,11 +3,9 @@ import time
 from models.modules.multihead import *
 from utils.prepare_data import *
 
-import pandas as pd
-
 # Hyperparameter
-MAX_SEQ_LENGTH = 100
-EMBEDDING_SIZE = 64
+MAX_DOCUMENT_LENGTH = 25
+EMBEDDING_SIZE = 128
 HIDDEN_SIZE = 512
 ATTENTION_SIZE = 64
 lr = 1e-3
@@ -15,42 +13,17 @@ BATCH_SIZE = 256
 KEEP_PROB = 0.5
 LAMBDA = 0.0001
 
-MAX_LABEL = 2
-
-vocab_size = 5
-
-epochs = 5
+MAX_LABEL = 15
+epochs = 10
 
 # load data
-x_train, y_train = load_data("./data/train-BRAF.csv", sample_ratio=1)
-x_test, y_test = load_data("./data/test-BRAF.csv", sample_ratio=1)
+x_train, y_train = load_data("../dbpedia_data/dbpedia_csv/train.csv", sample_ratio=0.1)
+x_test, y_test = load_data("../dbpedia_data/dbpedia_csv/test.csv", sample_ratio=0.1)
 
 # data preprocessing
-base_number = {'N':0, 'A':1, 'C':2, 'T':3, 'G':4}
-x_train_l = np.ndarray((len(x_train),MAX_SEQ_LENGTH))
-
-for t in np.arange(len(x_train)):
-    line = list(x_train[t])[1:MAX_SEQ_LENGTH+1]
-    for k in np.arange(MAX_SEQ_LENGTH):
-        x_train_l[t,k] = base_number[line[k]]
-    
-x_test_l = np.ndarray((len(x_test),MAX_SEQ_LENGTH))
-
-for t in np.arange(len(x_test)):    
-    line = list(x_test[t])[1:MAX_SEQ_LENGTH+1]
-    for k in np.arange(MAX_SEQ_LENGTH):
-        x_test_l[t,k] = base_number[line[k]]
-    
-print(x_train_l.shape)
-print(x_test_l.shape)
-
-# x_train = x_train_l[0:100000,:]
-# x_test = x_test_l[0:10000,:]
-x_train = x_train_l
-x_test = x_test_l
-
-# y_train = y_train[0:100000,:]
-# y_test = y_test[0:10000,:]
+x_train, x_test, vocab, vocab_size = \
+    data_preprocessing(x_train, x_test, MAX_DOCUMENT_LENGTH)
+print(vocab_size)
 
 # split dataset to test and dev
 x_test, x_dev, y_test, y_dev, dev_size, test_size = \
@@ -60,7 +33,7 @@ print("Validation size: ", dev_size)
 graph = tf.Graph()
 with graph.as_default():
 
-    batch_x = tf.placeholder(tf.int32, [None, MAX_SEQ_LENGTH])
+    batch_x = tf.placeholder(tf.int32, [None, MAX_DOCUMENT_LENGTH])
     batch_y = tf.placeholder(tf.float32, [None, MAX_LABEL])
     keep_prob = tf.placeholder(tf.float32)
 
@@ -71,7 +44,7 @@ with graph.as_default():
     # FFN(x) = LN(x + point-wisely NN(x))
     outputs = feedforward(outputs, [HIDDEN_SIZE, EMBEDDING_SIZE])
     print(outputs.shape)
-    outputs = tf.reshape(outputs, [-1, MAX_SEQ_LENGTH * EMBEDDING_SIZE])
+    outputs = tf.reshape(outputs, [-1, MAX_DOCUMENT_LENGTH * EMBEDDING_SIZE])
     logits = tf.layers.dense(outputs, units=MAX_LABEL)
     loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=batch_y))
     optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(loss)
@@ -80,6 +53,7 @@ with graph.as_default():
     prediction = tf.argmax(tf.nn.softmax(logits), 1)
     accuracy = tf.reduce_mean(tf.cast(tf.equal(prediction, tf.argmax(batch_y, 1)), tf.float32))
 
+steps = 10001 # about 5 epoch
 with tf.Session(graph=graph) as sess:
     sess.run(tf.global_variables_initializer())
     print("Initialized! ")

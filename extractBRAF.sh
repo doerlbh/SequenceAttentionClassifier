@@ -169,7 +169,6 @@ grep "14092466[5-9]" all-ref-train-BRAF.csv >> not-ref-train-BRAF.csv
 # diff -U $(wc -l < all-ref-test-BRAF.csv) all-ref-test-BRAF.csv not-ref-test-BRAF.csv | sed -n 's/^-//p' > ref-test-BRAF.csv
 # diff -U $(wc -l < all-ref-train-BRAF.csv) all-ref-train-BRAF.csv not-ref-train-BRAF.csv | sed -n 's/^-//p' > ref-train-BRAF.csv
 
-
 comm -3 <(sort all-ref-test-BRAF.csv) <(sort not-ref-test-BRAF.csv)  > ref-test-BRAF.csv
 comm -3 <(sort all-ref-train-BRAF.csv) <(sort not-ref-train-BRAF.csv)  > ref-train-BRAF.csv
 
