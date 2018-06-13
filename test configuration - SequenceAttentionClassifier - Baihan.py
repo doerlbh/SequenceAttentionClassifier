@@ -65,20 +65,26 @@ ref_names = ["class", "ref", "sequence"]
 def load_ref_data(file_name, sample_ratio= 1, n_class=2, names=ref_names):
     
     csv_file = pd.read_csv(file_name, names=ref_names)
-    shuffle_csv = csv_file.sample(frac=sample_ratio)
-    x = pd.Series(shuffle_csv["sequence"])
-    ref = pd.Series(shuffle_csv["ref"])
+    shuffle_csv = csv_file.sample(frac=sample_ratio).reset_index()
+#     x = pd.Series(shuffle_csv["sequence"])
+    x = list(shuffle_csv["sequence"])
+#     ref = pd.Series(shuffle_csv["ref"])
+    ref = list(shuffle_csv["ref"])
     y = pd.Series(shuffle_csv["class"])
     y = to_one_hot(y, n_class)
     print(y.shape)
+#     print(type(x))
+#     print(type(y))
+#     print(type(ref))
+
     return x, ref, y
+
 
 
 # In[5]:
 
 
 def to_one_hot(y, n_class):
-    
     return np.eye(n_class)[y.astype(int)]
 
 
@@ -98,7 +104,6 @@ def split_ref_dataset(x_test, y_test, ref_test, dev_ratio):
     y_test = y_test[dev_size:]
     ref_dev = ref_test[:dev_size]
     ref_test = ref_test[dev_size:]
-
     return x_test, x_dev, y_test, y_dev, ref_test, ref_dev, dev_size, test_size - dev_size
 
 
@@ -107,10 +112,10 @@ def split_ref_dataset(x_test, y_test, ref_test, dev_ratio):
 
 class TensorizedReadDataset(torch.utils.data.DataLoader):
     'Characterizes a Tensorized dataset for genome reads in PyTorch'
-    
+
     def __init__(self, reads, ref_locs, labels, read_length=100, genome_start=0, genome_end=0):
 #         super(TensorizedReadDataset, self).__init__()
-        
+
         self.read_length = read_length
         self.labels = labels
         self.reads = reads
@@ -122,7 +127,7 @@ class TensorizedReadDataset(torch.utils.data.DataLoader):
         return len(self.reads)
 
     def __getitem__(self, index):
-        
+
         vals = list(self.reads[index])[0:self.read_length]        
         locs = list(np.arange(self.ref_locs[index]-self.genome_start,self.ref_locs[index]+self.read_length-self.genome_start))
 
@@ -225,14 +230,17 @@ softval_dataset = TensorizedReadDataset(reads=x_softval,
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
                                            batch_size=BATCH_SIZE,
                                            shuffle=True)
+                                           # shuffle=True, collate_fn=lambda batch: torch.LongTensor(batch))
 
 hardval_loader = torch.utils.data.DataLoader(dataset=hardval_dataset,
                                              batch_size=BATCH_SIZE,
                                              shuffle=True)
+                                             # shuffle=True, collate_fn=lambda batch: torch.LongTensor(batch))
 
 softval_loader = torch.utils.data.DataLoader(dataset=softval_dataset,
                                              batch_size=BATCH_SIZE,
                                              shuffle=True)
+                                             # shuffle=True, collate_fn=lambda batch: torch.LongTensor(batch))
 
 
 # In[13]:
@@ -247,6 +255,7 @@ model = SequenceAttentionClassifier(genome_length=GENOME_LENGTH,
                                     num_classes=NUM_CLASSES)
 
 criterion = nn.CrossEntropyLoss()
+# criterion = nn.L1Loss
 optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
 
 
@@ -260,12 +269,18 @@ num_epochs = 1
 b = 0 # count batch
 for epoch in range(num_epochs):
     for x_batch, y_batch in train_loader:
+
+        # print(y_batch)
+        # print(torch.max(y_batch, 1))
+        # print(torch.max(y_batch.type(torch.LongTensor), 1)[1])
         
         optimizer.zero_grad()
         
         outputs = model(x_batch) 
-        
-        loss = criterion(outputs, y_batch)  
+
+        # loss = criterion(torch.LongTensor(outputs), torch.LongTensor(y_batch))  
+        loss = criterion(outputs, torch.max(y_batch.type(torch.LongTensor), 1)[1])
+        # loss = criterion(outputs, y_batch)
         loss.backward()
         optimizer.step()
         
