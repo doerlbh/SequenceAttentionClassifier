@@ -195,8 +195,8 @@ class SequenceAttentionClassifier(nn.Module):
 
 
 # load data
-x_train, refs_train, y_train = load_ref_data("../data/ref-train-BRAF.csv", sample_ratio=1)
-x_test, refs_test, y_test = load_ref_data("../data/ref-test-BRAF.csv", sample_ratio=1)
+x_train, refs_train, y_train = load_ref_data("./data/ref-train-BRAF.csv", sample_ratio=1)
+x_test, refs_test, y_test = load_ref_data("./data/ref-test-BRAF.csv", sample_ratio=1)
 
 # split dataset to test and dev
 x_train, x_softval, y_train, y_softval, refs_train, refs_softval, softval_size, train_size =     split_ref_dataset(x_train, y_train, refs_train, 0.01)
