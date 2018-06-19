@@ -1,25 +1,25 @@
+from models.attention import attention
+from tensorflow.contrib.rnn import BasicLSTMCell
+from tensorflow.python.ops.rnn import bidirectional_dynamic_rnn as bi_rnn
 import time
-
-from models.modules.multihead import *
 from utils.prepare_data import *
 
-import pandas as pd
-
 # Hyperparameter
-MAX_SEQ_LENGTH = 100
-EMBEDDING_SIZE = 64
-HIDDEN_SIZE = 512
+MAX_DOCUMENT_LENGTH = 100
+EMBEDDING_SIZE = 128
+HIDDEN_SIZE = 64
 ATTENTION_SIZE = 64
 lr = 1e-3
 BATCH_SIZE = 256
 KEEP_PROB = 0.5
 LAMBDA = 0.0001
-
 MAX_LABEL = 2
+epochs = 20
 
 vocab_size = 5
+MAX_SEQ_LENGTH = MAX_DOCUMENT_LENGTH
 
-epochs = 5
+vocab = ["N","A","C","T","G"]
 
 # load data
 x_train, y_train = load_data("./data/train-BRAF.csv", sample_ratio=1)
@@ -49,8 +49,16 @@ print(x_test_l.shape)
 x_train = x_train_l
 x_test = x_test_l
 
-# y_train = y_train[0:100000,:]
-# y_test = y_test[0:10000,:]
+# len = 25
+# attn + ind RNN: 87.761903 % 10 epoch 12s 91.428572 % 20 epoch 28s
+# attn + lstm:     43.619049 % 10 epoch 22s 76.158732 % 20 epoch 42 s
+# attn + bi lstm : 78.888887 % 10 epoch   80.777776 % 20 epoch 57s
+# adversarial + attention + bi LSTM : 90.412700 % 10 epoch 200s
+
+
+# len = 256
+# attn + ind rnn: 70.142859 % 10 epoch 89s
+# attn + lstm:  7.587302 %  10 epoch 166s
 
 # split dataset to test and dev
 x_test, x_dev, y_test, y_dev, dev_size, test_size = \
@@ -60,24 +68,37 @@ print("Validation size: ", dev_size)
 graph = tf.Graph()
 with graph.as_default():
 
-    batch_x = tf.placeholder(tf.int32, [None, MAX_SEQ_LENGTH])
+    batch_x = tf.placeholder(tf.int32, [None, MAX_DOCUMENT_LENGTH])
     batch_y = tf.placeholder(tf.float32, [None, MAX_LABEL])
     keep_prob = tf.placeholder(tf.float32)
 
     embeddings_var = tf.Variable(tf.random_uniform([vocab_size, EMBEDDING_SIZE], -1.0, 1.0), trainable=True)
     batch_embedded = tf.nn.embedding_lookup(embeddings_var, batch_x)
-    # multihead attention
-    outputs = multihead_attention(queries=batch_embedded, keys=batch_embedded)
-    # FFN(x) = LN(x + point-wisely NN(x))
-    outputs = feedforward(outputs, [HIDDEN_SIZE, EMBEDDING_SIZE])
-    print(outputs.shape)
-    outputs = tf.reshape(outputs, [-1, MAX_SEQ_LENGTH * EMBEDDING_SIZE])
-    logits = tf.layers.dense(outputs, units=MAX_LABEL)
-    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=batch_y))
+    # print(batch_embedded.shape)  # (?, 256, 100)
+    rnn_outputs, _ = tf.nn.dynamic_rnn(BasicLSTMCell(HIDDEN_SIZE), batch_embedded, dtype=tf.float32)
+
+    # rnn_outputs, _ = bi_rnn(BasicLSTMCell(HIDDEN_SIZE), BasicLSTMCell(HIDDEN_SIZE),
+    #                         inputs=batch_embedded, dtype=tf.float32)
+    # print(rnn_outputs)
+    # Attention
+    attention_output, alphas = attention(rnn_outputs, ATTENTION_SIZE, return_alphas=True)
+    drop = tf.nn.dropout(attention_output, keep_prob)
+    shape = drop.get_shape()
+    # print(shape)
+
+    # Fully connected layer（dense layer)
+    W = tf.Variable(tf.truncated_normal([shape[1].value, MAX_LABEL], stddev=0.1))
+    b = tf.Variable(tf.constant(0., shape=[MAX_LABEL]))
+    y_hat = tf.nn.xw_plus_b(drop, W, b)
+    # print(y_hat.shape)
+
+    # y_hat = tf.squeeze(y_hat)
+
+    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=y_hat, labels=batch_y))
     optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(loss)
 
     # Accuracy metric
-    prediction = tf.argmax(tf.nn.softmax(logits), 1)
+    prediction = tf.argmax(tf.nn.softmax(y_hat), 1)
     accuracy = tf.reduce_mean(tf.cast(tf.equal(prediction, tf.argmax(batch_y, 1)), tf.float32))
 
 with tf.Session(graph=graph) as sess:
@@ -95,22 +116,19 @@ with tf.Session(graph=graph) as sess:
             l, _, acc = sess.run([loss, optimizer, accuracy], feed_dict=fd)
 
         epoch_finish = time.time()
-        print("Validation accuracy and loss: ", sess.run([accuracy, loss], feed_dict={
+        print("Validation accuracy: ", sess.run([accuracy, loss], feed_dict={
             batch_x: x_dev,
             batch_y: y_dev,
             keep_prob: 1.0
         }))
-        print("epoch time:", epoch_finish - epoch_start , " s")
 
     print("Training finished, time consumed : ", time.time() - start, " s")
     print("start predicting:  \n")
     test_accuracy = sess.run([accuracy], feed_dict={batch_x: x_test, batch_y: y_test, keep_prob: 1})
     print("Test accuracy : %f %%" % (test_accuracy[0] * 100))
-    
-    save_path = saver.save(sess, "./all_attention.ckpt")
+
+    save_path = saver.save(sess, "./attn_lstm_hierarchical.ckpt")
     print("Model saved in path: %s" % save_path)
-
-
 
 
 

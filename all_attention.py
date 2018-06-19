@@ -3,11 +3,9 @@ import time
 from models.modules.multihead import *
 from utils.prepare_data import *
 
-import pandas as pd
-
 # Hyperparameter
-MAX_SEQ_LENGTH = 100
-EMBEDDING_SIZE = 64
+MAX_DOCUMENT_LENGTH = 100
+EMBEDDING_SIZE = 128
 HIDDEN_SIZE = 512
 ATTENTION_SIZE = 64
 lr = 1e-3
@@ -16,10 +14,12 @@ KEEP_PROB = 0.5
 LAMBDA = 0.0001
 
 MAX_LABEL = 2
+epochs = 20
 
 vocab_size = 5
+MAX_SEQ_LENGTH = MAX_DOCUMENT_LENGTH
 
-epochs = 5
+vocab = ["N","A","C","T","G"]
 
 # load data
 x_train, y_train = load_data("./data/train-BRAF.csv", sample_ratio=1)
@@ -49,9 +49,6 @@ print(x_test_l.shape)
 x_train = x_train_l
 x_test = x_test_l
 
-# y_train = y_train[0:100000,:]
-# y_test = y_test[0:10000,:]
-
 # split dataset to test and dev
 x_test, x_dev, y_test, y_dev, dev_size, test_size = \
     split_dataset(x_test, y_test, 0.1)
@@ -60,7 +57,7 @@ print("Validation size: ", dev_size)
 graph = tf.Graph()
 with graph.as_default():
 
-    batch_x = tf.placeholder(tf.int32, [None, MAX_SEQ_LENGTH])
+    batch_x = tf.placeholder(tf.int32, [None, MAX_DOCUMENT_LENGTH])
     batch_y = tf.placeholder(tf.float32, [None, MAX_LABEL])
     keep_prob = tf.placeholder(tf.float32)
 
@@ -71,7 +68,7 @@ with graph.as_default():
     # FFN(x) = LN(x + point-wisely NN(x))
     outputs = feedforward(outputs, [HIDDEN_SIZE, EMBEDDING_SIZE])
     print(outputs.shape)
-    outputs = tf.reshape(outputs, [-1, MAX_SEQ_LENGTH * EMBEDDING_SIZE])
+    outputs = tf.reshape(outputs, [-1, MAX_DOCUMENT_LENGTH * EMBEDDING_SIZE])
     logits = tf.layers.dense(outputs, units=MAX_LABEL)
     loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=batch_y))
     optimizer = tf.train.AdamOptimizer(learning_rate=lr).minimize(loss)
@@ -80,6 +77,7 @@ with graph.as_default():
     prediction = tf.argmax(tf.nn.softmax(logits), 1)
     accuracy = tf.reduce_mean(tf.cast(tf.equal(prediction, tf.argmax(batch_y, 1)), tf.float32))
 
+steps = 10001 # about 5 epoch
 with tf.Session(graph=graph) as sess:
     sess.run(tf.global_variables_initializer())
     print("Initialized! ")
@@ -106,11 +104,9 @@ with tf.Session(graph=graph) as sess:
     print("start predicting:  \n")
     test_accuracy = sess.run([accuracy], feed_dict={batch_x: x_test, batch_y: y_test, keep_prob: 1})
     print("Test accuracy : %f %%" % (test_accuracy[0] * 100))
-    
+
     save_path = saver.save(sess, "./all_attention.ckpt")
     print("Model saved in path: %s" % save_path)
-
-
 
 
 
