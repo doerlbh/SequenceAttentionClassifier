@@ -783,7 +783,6 @@ shuf -n 39000 HG-NRAS.txt > HG-NRAS-train39000.txt
 
 cd ..
 
-
 # ------- somatic mutations -----------
 
 cat ./tumor/tumor-KRAS-train1400000.txt ./normal/normal-KRAS-train1400000.txt  | tr -d " \t"  > ref-somatic-KRAS-train1400000.csv
@@ -820,4 +819,62 @@ cat ./tumor/tumor-NRAS-test1000.txt ./1000Genomes/HG-NRAS-test1000.txt  | tr -d 
 
 scp -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem ubuntu@ec2-18-206-236-146.compute-1.amazonaws.com:/home/ubuntu/data/*csv . 
 
+scp -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem test_SAC.py ubuntu@ec2-18-206-236-146.compute-1.amazonaws.com:/home/ubuntu/data/  
 
+scp -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem model*.py ubuntu@ec2-54-175-210-181.compute-1.amazonaws.com:/home/ubuntu/attention/  
+
+nohup python model_lr5em2lm1em4.py > model_lr5em2lm1em4.out & 
+nohup python model_lr5em2lm1em5.py > model_lr5em2lm1em5.out & 
+nohup python model_lr5em2lm1em2.py > model_lr5em2lm1em2.out & 
+nohup python model_lr5em2lm1em3.py > model_lr5em2lm1em3.out &
+nohup python model_lr1em1lm1em2.py > model_lr1em2lm1em2.out & 
+nohup python model_lr1em1lm1em3.py > model_lr1em2lm1em3.out &
+nohup python model_lr1em1lm1em4.py > model_lr1em2lm1em4.out &
+nohup python model_lr1em1lm1em5.py > model_lr1em2lm1em5.out & 
+nohup python model_lr1em1lm1em2.py > model_lr1em1lm1em2.out & 
+nohup python model_lr1em1lm1em3.py > model_lr1em1lm1em3.out &
+nohup python model_lr1em1lm1em4.py > model_lr1em1lm1em4.out &
+nohup python model_lr1em1lm1em5.py > model_lr1em1lm1em5.out & 
+15516
+15664
+15819
+15960
+
+
+ssh -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem ubuntu@ec2-54-175-210-181.compute-1.amazonaws.com
+
+scp -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem -r ubuntu@ec2-54-175-210-181.compute-1.amazonaws.com:/home/ubuntu/attention/ . 
+
+cat cv_loss_each_batch_lr1em1lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em1lm1em2.txt2
+cat cv_loss_each_batch_lr1em1lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em1lm1em3.txt2
+cat cv_loss_each_batch_lr1em1lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em1lm1em4.txt2
+cat cv_loss_each_batch_lr1em1lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em1lm1em5.txt2
+cat cv_loss_each_batch_lr5em2lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr5em2lm1em2.txt2
+cat cv_loss_each_batch_lr5em2lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr5em2lm1em3.txt2 
+cat cv_loss_each_batch_lr5em2lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr5em2lm1em4.txt2
+cat cv_loss_each_batch_lr5em2lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr5em2lm1em5.txt2
+cat cv_loss_val_each_batch_lr1em1lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em1lm1em2.txt2
+cat cv_loss_val_each_batch_lr1em1lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em1lm1em3.txt2
+cat cv_loss_val_each_batch_lr1em1lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em1lm1em4.txt2
+cat cv_loss_val_each_batch_lr1em1lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em1lm1em5.txt2
+cat cv_loss_val_each_batch_lr5em2lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr5em2lm1em2.txt2
+cat cv_loss_val_each_batch_lr5em2lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr5em2lm1em3.txt2
+cat cv_loss_val_each_batch_lr5em2lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr5em2lm1em4.txt2
+cat cv_loss_val_each_batch_lr5em2lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr5em2lm1em5.txt2
+
+mv cv_loss_each_batch_lr1em1lm1em2.txt2 cv_loss_each_batch_lr1em1lm1em2.txt
+mv cv_loss_each_batch_lr1em1lm1em3.txt2 cv_loss_each_batch_lr1em1lm1em3.txt
+mv cv_loss_each_batch_lr1em1lm1em4.txt2 cv_loss_each_batch_lr1em1lm1em4.txt
+mv cv_loss_each_batch_lr1em1lm1em5.txt2 cv_loss_each_batch_lr1em1lm1em5.txt
+mv cv_loss_each_batch_lr5em2lm1em2.txt2 cv_loss_each_batch_lr5em2lm1em2.txt
+mv cv_loss_each_batch_lr5em2lm1em3.txt2 cv_loss_each_batch_lr5em2lm1em3.txt
+mv cv_loss_each_batch_lr5em2lm1em4.txt2 cv_loss_each_batch_lr5em2lm1em4.txt
+mv cv_loss_each_batch_lr5em2lm1em5.txt2 cv_loss_each_batch_lr5em2lm1em5.txt
+mv cv_loss_val_each_batch_lr1em1lm1em2.txt2 cv_loss_val_each_batch_lr1em1lm1em2.txt
+mv cv_loss_val_each_batch_lr1em1lm1em3.txt2 cv_loss_val_each_batch_lr1em1lm1em3.txt
+mv cv_loss_val_each_batch_lr1em1lm1em4.txt2 cv_loss_val_each_batch_lr1em1lm1em4.txt
+mv cv_loss_val_each_batch_lr1em1lm1em5.txt2 cv_loss_val_each_batch_lr1em1lm1em5.txt 
+mv cv_loss_val_each_batch_lr5em2lm1em2.txt2 cv_loss_val_each_batch_lr5em2lm1em2.txt
+mv cv_loss_val_each_batch_lr5em2lm1em3.txt2 cv_loss_val_each_batch_lr5em2lm1em3.txt
+mv cv_loss_val_each_batch_lr5em2lm1em4.txt2 cv_loss_val_each_batch_lr5em2lm1em4.txt
+mv cv_loss_val_each_batch_lr5em2lm1em5.txt2 cv_loss_val_each_batch_lr5em2lm1em5.txt
