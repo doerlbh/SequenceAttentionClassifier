@@ -827,54 +827,126 @@ nohup python model_lr5em2lm1em4.py > model_lr5em2lm1em4.out &
 nohup python model_lr5em2lm1em5.py > model_lr5em2lm1em5.out & 
 nohup python model_lr5em2lm1em2.py > model_lr5em2lm1em2.out & 
 nohup python model_lr5em2lm1em3.py > model_lr5em2lm1em3.out &
-nohup python model_lr1em1lm1em2.py > model_lr1em2lm1em2.out & 
-nohup python model_lr1em1lm1em3.py > model_lr1em2lm1em3.out &
-nohup python model_lr1em1lm1em4.py > model_lr1em2lm1em4.out &
-nohup python model_lr1em1lm1em5.py > model_lr1em2lm1em5.out & 
-nohup python model_lr1em1lm1em2.py > model_lr1em1lm1em2.out & 
-nohup python model_lr1em1lm1em3.py > model_lr1em1lm1em3.out &
-nohup python model_lr1em1lm1em4.py > model_lr1em1lm1em4.out &
-nohup python model_lr1em1lm1em5.py > model_lr1em1lm1em5.out & 
 15516
 15664
 15819
 15960
+
+nohup python model_lr1em1lm1em2.py > model_lr1em2lm1em2.out & 
+nohup python model_lr1em1lm1em3.py > model_lr1em2lm1em3.out &
+nohup python model_lr1em1lm1em4.py > model_lr1em2lm1em4.out &
+nohup python model_lr1em1lm1em5.py > model_lr1em2lm1em5.out & 
+16146
+16299
+16440
+16579
+
+nohup python model_lr1em1lm1em2.py > model_lr1em1lm1em2.out & 
+nohup python model_lr1em1lm1em3.py > model_lr1em1lm1em3.out &
+nohup python model_lr1em1lm1em4.py > model_lr1em1lm1em4.out &
+nohup python model_lr1em1lm1em5.py > model_lr1em1lm1em5.out & 
+16720
+16859
+16997
+17143
 
 
 ssh -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem ubuntu@ec2-54-175-210-181.compute-1.amazonaws.com
 
 scp -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem -r ubuntu@ec2-54-175-210-181.compute-1.amazonaws.com:/home/ubuntu/attention/ . 
 
+cat cv_loss_each_batch_lr1em2lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em2lm1em2.txt2
+cat cv_loss_each_batch_lr1em2lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em2lm1em3.txt2
+cat cv_loss_each_batch_lr1em2lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em2lm1em4.txt2
+cat cv_loss_each_batch_lr1em2lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em2lm1em5.txt2
+
 cat cv_loss_each_batch_lr1em1lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em1lm1em2.txt2
 cat cv_loss_each_batch_lr1em1lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em1lm1em3.txt2
 cat cv_loss_each_batch_lr1em1lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em1lm1em4.txt2
 cat cv_loss_each_batch_lr1em1lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr1em1lm1em5.txt2
+
 cat cv_loss_each_batch_lr5em2lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr5em2lm1em2.txt2
 cat cv_loss_each_batch_lr5em2lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr5em2lm1em3.txt2 
 cat cv_loss_each_batch_lr5em2lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr5em2lm1em4.txt2
 cat cv_loss_each_batch_lr5em2lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_each_batch_lr5em2lm1em5.txt2
+
+cat cv_loss_val_each_batch_lr1em2lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em2lm1em2.txt2
+cat cv_loss_val_each_batch_lr1em2lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em2lm1em3.txt2
+cat cv_loss_val_each_batch_lr1em2lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em2lm1em4.txt2
+cat cv_loss_val_each_batch_lr1em2lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em2lm1em5.txt2
+
 cat cv_loss_val_each_batch_lr1em1lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em1lm1em2.txt2
 cat cv_loss_val_each_batch_lr1em1lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em1lm1em3.txt2
 cat cv_loss_val_each_batch_lr1em1lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em1lm1em4.txt2
 cat cv_loss_val_each_batch_lr1em1lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr1em1lm1em5.txt2
+
 cat cv_loss_val_each_batch_lr5em2lm1em2.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr5em2lm1em2.txt2
 cat cv_loss_val_each_batch_lr5em2lm1em3.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr5em2lm1em3.txt2
 cat cv_loss_val_each_batch_lr5em2lm1em4.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr5em2lm1em4.txt2
 cat cv_loss_val_each_batch_lr5em2lm1em5.txt | cut -f 2 -d '(' | cut -f 1 -d ')' > cv_loss_val_each_batch_lr5em2lm1em5.txt2
 
+mv cv_loss_each_batch_lr1em2lm1em2.txt2 cv_loss_each_batch_lr1em2lm1em2.txt
+mv cv_loss_each_batch_lr1em2lm1em3.txt2 cv_loss_each_batch_lr1em2lm1em3.txt
+mv cv_loss_each_batch_lr1em2lm1em4.txt2 cv_loss_each_batch_lr1em2lm1em4.txt
+mv cv_loss_each_batch_lr1em2lm1em5.txt2 cv_loss_each_batch_lr1em2lm1em5.txt
+
 mv cv_loss_each_batch_lr1em1lm1em2.txt2 cv_loss_each_batch_lr1em1lm1em2.txt
 mv cv_loss_each_batch_lr1em1lm1em3.txt2 cv_loss_each_batch_lr1em1lm1em3.txt
 mv cv_loss_each_batch_lr1em1lm1em4.txt2 cv_loss_each_batch_lr1em1lm1em4.txt
 mv cv_loss_each_batch_lr1em1lm1em5.txt2 cv_loss_each_batch_lr1em1lm1em5.txt
+
 mv cv_loss_each_batch_lr5em2lm1em2.txt2 cv_loss_each_batch_lr5em2lm1em2.txt
 mv cv_loss_each_batch_lr5em2lm1em3.txt2 cv_loss_each_batch_lr5em2lm1em3.txt
 mv cv_loss_each_batch_lr5em2lm1em4.txt2 cv_loss_each_batch_lr5em2lm1em4.txt
 mv cv_loss_each_batch_lr5em2lm1em5.txt2 cv_loss_each_batch_lr5em2lm1em5.txt
+
+mv cv_loss_val_each_batch_lr1em2lm1em2.txt2 cv_loss_val_each_batch_lr1em2lm1em2.txt
+mv cv_loss_val_each_batch_lr1em2lm1em3.txt2 cv_loss_val_each_batch_lr1em2lm1em3.txt
+mv cv_loss_val_each_batch_lr1em2lm1em4.txt2 cv_loss_val_each_batch_lr1em2lm1em4.txt
+mv cv_loss_val_each_batch_lr1em2lm1em5.txt2 cv_loss_val_each_batch_lr1em2lm1em5.txt 
+
 mv cv_loss_val_each_batch_lr1em1lm1em2.txt2 cv_loss_val_each_batch_lr1em1lm1em2.txt
 mv cv_loss_val_each_batch_lr1em1lm1em3.txt2 cv_loss_val_each_batch_lr1em1lm1em3.txt
 mv cv_loss_val_each_batch_lr1em1lm1em4.txt2 cv_loss_val_each_batch_lr1em1lm1em4.txt
 mv cv_loss_val_each_batch_lr1em1lm1em5.txt2 cv_loss_val_each_batch_lr1em1lm1em5.txt 
+
 mv cv_loss_val_each_batch_lr5em2lm1em2.txt2 cv_loss_val_each_batch_lr5em2lm1em2.txt
 mv cv_loss_val_each_batch_lr5em2lm1em3.txt2 cv_loss_val_each_batch_lr5em2lm1em3.txt
 mv cv_loss_val_each_batch_lr5em2lm1em4.txt2 cv_loss_val_each_batch_lr5em2lm1em4.txt
 mv cv_loss_val_each_batch_lr5em2lm1em5.txt2 cv_loss_val_each_batch_lr5em2lm1em5.txt
+
+ssh -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem ubuntu@ec2-204-236-244-214.compute-1.amazonaws.com
+scp -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem NRAS*.py ubuntu@ec2-204-236-244-214.compute-1.amazonaws.com:/home/ubuntu/attention/  
+scp -i /Users/DoerLBH/Dropbox/git/doerlbh-rabadan.pem ./data/*csv ubuntu@ec2-204-236-244-214.compute-1.amazonaws.com:/home/ubuntu/data/ 
+
+cp NRAS-germline-lr5em2_lm1em5_batch100_q1_e50.py KRAS-germline-lr5em2_lm1em5_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em5_batch100_q10_e50.py KRAS-germline-lr5em2_lm1em5_batch100_q10_e50.py
+cp NRAS-germline-lr5em2_lm1em4_batch100_q1_e50.py KRAS-germline-lr5em2_lm1em4_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em4_batch100_q10_e50.py KRAS-germline-lr5em2_lm1em4_batch100_q10_e50.py
+cp NRAS-germline-lr5em2_lm1em3_batch100_q1_e50.py KRAS-germline-lr5em2_lm1em3_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em3_batch100_q10_e50.py KRAS-germline-lr5em2_lm1em3_batch100_q10_e50.py
+cp NRAS-germline-lr1em1_lm1em4_batch100_q1_e50.py KRAS-germline-lr1em1_lm1em4_batch100_q1_e50.py
+
+cp NRAS-germline-lr5em2_lm1em5_batch100_q1_e50.py NRAS-mutation-lr5em2_lm1em5_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em5_batch100_q10_e50.py NRAS-mutation-lr5em2_lm1em5_batch100_q10_e50.py
+cp NRAS-germline-lr5em2_lm1em4_batch100_q1_e50.py NRAS-mutation-lr5em2_lm1em4_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em4_batch100_q10_e50.py NRAS-mutation-lr5em2_lm1em4_batch100_q10_e50.py
+cp NRAS-germline-lr5em2_lm1em3_batch100_q1_e50.py NRAS-mutation-lr5em2_lm1em3_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em3_batch100_q10_e50.py NRAS-mutation-lr5em2_lm1em3_batch100_q10_e50.py
+cp NRAS-germline-lr1em1_lm1em4_batch100_q1_e50.py NRAS-mutation-lr1em1_lm1em4_batch100_q1_e50.py
+
+cp NRAS-germline-lr5em2_lm1em5_batch100_q1_e50.py NRAS-germline-lr5em2_lm1em5_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em5_batch100_q10_e50.py NRAS-germline-lr5em2_lm1em5_batch100_q10_e50.py
+cp NRAS-germline-lr5em2_lm1em4_batch100_q1_e50.py NRAS-germline-lr5em2_lm1em4_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em4_batch100_q10_e50.py NRAS-germline-lr5em2_lm1em4_batch100_q10_e50.py
+cp NRAS-germline-lr5em2_lm1em3_batch100_q1_e50.py NRAS-germline-lr5em2_lm1em3_batch100_q1_e50.py
+cp NRAS-germline-lr5em2_lm1em3_batch100_q10_e50.py NRAS-germline-lr5em2_lm1em3_batch100_q10_e50.py
+cp NRAS-germline-lr1em1_lm1em4_batch100_q1_e50.py NRAS-germline-lr1em1_lm1em4_batch100_q1_e50.py
+
+nohup python NRAS-germline-lr1em1_lm1em4_batch100_q1_e50.py > NRAS-germline-lr1em1_lm1em4_batch100_q1_e50.out
+nohup python NRAS-germline-lr5em2_lm1em3_batch100_q10_e50.py > NRAS-germline-lr5em2_lm1em3_batch100_q10_e50.out
+nohup python NRAS-germline-lr5em2_lm1em3_batch100_q1_e50.py > NRAS-germline-lr5em2_lm1em3_batch100_q1_e50.out
+nohup python NRAS-germline-lr5em2_lm1em4_batch100_q10_e50.py > NRAS-germline-lr5em2_lm1em4_batch100_q10_e50.out
+nohup python NRAS-germline-lr5em2_lm1em4_batch100_q1_e50.py > NRAS-germline-lr5em2_lm1em4_batch100_q1_e50.out
+nohup python NRAS-germline-lr5em2_lm1em5_batch100_q10_e50.py > NRAS-germline-lr5em2_lm1em5_batch100_q10_e50.out
+nohup python NRAS-germline-lr5em2_lm1em5_batch100_q1_e50.py > NRAS-germline-lr5em2_lm1em5_batch100_q1_e50.out
